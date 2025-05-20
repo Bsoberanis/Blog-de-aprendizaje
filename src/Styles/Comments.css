@@ -1,0 +1,197 @@
+/* src/Styles/Comments.css */
+
+.comments-section {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.comments-title {
+  text-align: center;
+  font-size: 2.2rem;
+  color: #1f2937;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #d1d5db;
+  padding-bottom: 0.5rem;
+}
+
+.comments-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.comments-input,
+.comments-select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  width: 250px;
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.comments-input:focus,
+.comments-select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #bfdbfe;
+}
+
+.comments-button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.comments-button:hover {
+  background-color: #1d4ed8;
+}
+
+/* Formulario nuevo comentario */
+.new-comment-form {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.new-comment-form h3 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #374151;
+}
+
+.new-comment-form input,
+.new-comment-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.new-comment-form button {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.new-comment-form button:hover {
+  background-color: #059669;
+}
+
+/* Comentarios individuales */
+.comments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.comment-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s;
+}
+
+.comment-card:hover {
+  transform: translateY(-5px);
+}
+
+.comment-date {
+  display: block;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.comment-title {
+  font-size: 1.2rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.comment-detail {
+  font-size: 0.95rem;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.comment-text {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+.comment-card textarea {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  resize: vertical;
+}
+
+.comment-card button {
+  margin-right: 0.5rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.comment-card button:hover {
+  background-color: #2563eb;
+}
+
+.comment-card button:last-child {
+  background-color: #ef4444;
+}
+
+.comment-card button:last-child:hover {
+  background-color: #dc2626;
+}
+
+/* Estados */
+.comments-error {
+  color: #dc2626;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.comments-loading,
+.comments-empty {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 1rem 0;
+}

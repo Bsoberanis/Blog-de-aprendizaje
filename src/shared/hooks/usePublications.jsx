@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import {
   getPublications,
   getPublicationsByCourseName,
-  postComment,
+  createComment,  // Aquí el cambio
 } from "../../services/api";
 
 export const usePublications = () => {
-  // Estados para manejar publicaciones y comentarios
   const [publications, setPublications] = useState([]);
   const [selectedPublication, setSelectedPublication] = useState(null);
   const [comment, setComment] = useState("");
@@ -17,7 +16,6 @@ export const usePublications = () => {
   const [error, setError] = useState(null);
   const [commentSuccess, setCommentSuccess] = useState(false);
 
-  // Función para ordenar publicaciones según el filtro seleccionado
   const sortPublications = (items, criterion) => {
     switch (criterion) {
       case "course":
@@ -33,40 +31,45 @@ export const usePublications = () => {
     }
   };
 
-  // Función para obtener publicaciones, opcionalmente filtradas por curso
   const fetchPublications = async (query = "") => {
     setLoading(true);
     setError(null);
     setSelectedPublication(null);
 
-    const res = query
-      ? await getPublicationsByCourseName(query)
-      : await getPublications();
+    let res;
+    try {
+      res = query
+        ? await getPublicationsByCourseName(query)
+        : await getPublications();
 
-    const data = res?.data?.publications || [];
+      const data = res?.data?.publications || [];
 
-    if (res.error || data.length === 0) {
-      setError(
-        res.error
-          ? "❌ Error al cargar las publicaciones."
-          : "⚠️ No se encontraron publicaciones para este curso."
-      );
+      if (res.error || data.length === 0) {
+        setError(
+          res.error
+            ? "❌ Error al cargar las publicaciones."
+            : "⚠️ No se encontraron publicaciones para este curso."
+        );
+        setPublications([]);
+      } else {
+        setPublications(filter ? sortPublications(data, filter) : data);
+      }
+    } catch (err) {
+      console.error("Error fetching publications:", err);
+      setError("❌ Error al conectar con el servidor.");
       setPublications([]);
-    } else {
-      setPublications(filter ? sortPublications(data, filter) : data);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  // Función para enviar un comentario asociado a una publicación
   const handleCommentSubmit = async () => {
     if (!comment.trim() || !author.trim()) return;
 
-    const res = await postComment({
+    const res = await createComment({
       author,
       comment,
-      publication: selectedPublication.title,
+      publication: selectedPublication?.title,
     });
 
     if (!res.error) {
@@ -78,12 +81,10 @@ export const usePublications = () => {
     }
   };
 
-  // Efecto para cargar publicaciones al montar el componente
   useEffect(() => {
     fetchPublications();
   }, []);
 
-  // Efecto para reordenar publicaciones cuando cambia el filtro
   useEffect(() => {
     setPublications((prev) => sortPublications(prev, filter));
   }, [filter]);

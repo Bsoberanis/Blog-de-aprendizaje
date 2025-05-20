@@ -1,4 +1,6 @@
-import { useComments } from "../shared/hooks/useComments.jsx";
+// src/pages/Comments.jsx
+import { useComments } from "../shared/hooks/useComments";
+import "../Styles/Comments.css";
 
 const Comments = () => {
   const {
@@ -10,6 +12,15 @@ const Comments = () => {
     filter,
     setFilter,
     fetchComments,
+    editingId,
+    editedText,
+    setEditedText,
+    handleEdit,
+    handleSave,
+    handleDelete,
+    newComment,
+    setNewComment,
+    handleCreate,
   } = useComments();
 
   const handleSearch = () => {
@@ -22,17 +33,15 @@ const Comments = () => {
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-8 py-12 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white font-sans rounded-lg shadow-lg">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-cyan-400 tracking-wide drop-shadow-lg">
-        Comentarios de Usuario
-      </h2>
+    <section className="comments-section">
+      <h2 className="comments-title">Comentarios de Usuario</h2>
 
       {/* Buscador y filtros */}
-      <div className="flex flex-col md:flex-row md:items-center gap-6 p-6 bg-gray-850 bg-opacity-30 border border-cyan-600 rounded-xl shadow-xl mb-12">
+      <div className="comments-controls">
         <input
           type="text"
           placeholder="🔍 Buscar por título de publicación..."
-          className="flex-1 px-5 py-3 bg-gray-800 border border-cyan-600 rounded-md text-white placeholder-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400 transition shadow-inner"
+          className="comments-input"
           value={searchTitle}
           onChange={(e) => setSearchTitle(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
@@ -40,7 +49,7 @@ const Comments = () => {
         />
         <button
           onClick={clearSearch}
-          className="px-5 py-3 bg-cyan-700 hover:bg-cyan-600 font-semibold rounded-md transition shadow-md border border-cyan-600"
+          className="comments-button"
           aria-label="Mostrar todos los comentarios"
         >
           Mostrar Todo
@@ -48,7 +57,7 @@ const Comments = () => {
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="px-5 py-3 bg-gray-800 border border-cyan-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 transition shadow-inner"
+          className="comments-select"
           aria-label="Filtrar comentarios"
         >
           <option value=""> Filtrar (ninguno)</option>
@@ -58,33 +67,43 @@ const Comments = () => {
         </select>
       </div>
 
+      {/* Formulario para nuevo comentario */}
+      <div className="new-comment-form">
+        <h3>Agregar Nuevo Comentario</h3>
+        <input
+          type="text"
+          placeholder="Autor"
+          value={newComment.author}
+          onChange={(e) =>
+            setNewComment({ ...newComment, author: e.target.value })
+          }
+        />
+        <textarea
+          placeholder="Comentario"
+          value={newComment.comment}
+          onChange={(e) =>
+            setNewComment({ ...newComment, comment: e.target.value })
+          }
+        />
+        <button onClick={handleCreate}>Publicar</button>
+      </div>
+
       {/* Mensajes de estado */}
-      {error && (
-        <div className="bg-red-900 border border-red-700 text-red-300 p-5 rounded-md mb-8 shadow-inner">
-          {error}
-        </div>
-      )}
+      {error && <div className="comments-error">{error}</div>}
 
       {loading && !error && (
-        <p className="text-cyan-400 text-center font-semibold tracking-wide animate-pulse">
-          ⏳ Cargando comentarios...
-        </p>
+        <p className="comments-loading">⏳ Cargando comentarios...</p>
       )}
 
       {/* Lista de comentarios */}
       {!loading && comments.length > 0 ? (
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="comments-grid">
           {comments.map(({ _id, publication, author, comment, createdAt }) => (
-            <article
-              key={_id}
-              className="bg-gray-800 border border-cyan-700 rounded-xl shadow-lg hover:shadow-cyan-500/70 transition p-7 flex flex-col"
-              aria-label={`Comentario en ${publication?.title || "Sin título"}`}
-            >
+            <article key={_id} className="comment-card">
               <time
-                className="text-sm text-cyan-300 mb-3"
+                className="comment-date"
                 dateTime={new Date(createdAt).toISOString()}
               >
-                {" "}
                 {new Date(createdAt).toLocaleDateString("es-CL", {
                   day: "2-digit",
                   month: "long",
@@ -92,33 +111,45 @@ const Comments = () => {
                 })}
               </time>
 
-              <h3 className="text-xl font-bold text-cyan-400 mb-3 tracking-wide">
+              <h3 className="comment-title">
                 {publication?.title || "Sin Título"}
               </h3>
 
-              <p className="mb-1 text-gray-300">
-                <strong> Curso:</strong>{" "}
+              <p className="comment-detail">
+                <strong>Curso:</strong>{" "}
                 {publication?.course?.length
                   ? publication.course.map((c) => c.name).join(", ")
                   : "No especificado"}
               </p>
 
-              <p className="mb-3 text-gray-300">
-                <strong> Autor:</strong> {author}
+              <p className="comment-detail">
+                <strong>Autor:</strong> {author}
               </p>
 
-              <p className="text-gray-200 flex-grow leading-relaxed">
-                <strong>Comentario:</strong> {comment}
-              </p>
+              {editingId === _id ? (
+                <>
+                  <textarea
+                    value={editedText}
+                    onChange={(e) => setEditedText(e.target.value)}
+                  />
+                  <button onClick={() => handleSave(_id)}>Guardar</button>
+                </>
+              ) : (
+                <>
+                  <p className="comment-text">
+                    <strong>Comentario:</strong> {comment}
+                  </p>
+                  <button onClick={() => handleEdit(_id, comment)}>Editar</button>
+                  <button onClick={() => handleDelete(_id)}>Eliminar</button>
+                </>
+              )}
             </article>
           ))}
         </div>
       ) : (
         !loading &&
         !error && (
-          <p className="text-center text-cyan-400 font-semibold tracking-wide">
-            No se encontraron comentarios.
-          </p>
+          <p className="comments-empty">No se encontraron comentarios.</p>
         )
       )}
     </section>
